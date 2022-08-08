@@ -1,0 +1,3 @@
+
+rootProject.name = "jesque-test"
+

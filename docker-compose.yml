@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  redis:
+    image: redis:7.0.4
+    container_name: resque-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --save "" --appendonly no --databases 1 --maxmemory 4G --maxmemory-policy allkeys-lru
+
+  resque:
+    image: ennexa/resque-web
+    container_name: resque-web
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    command: --r redis
+    depends_on:
+      - redis
+
+  redis-stat:
+    image: insready/redis-stat:latest
+    container_name: redis-stat
+    restart: always
+    ports:
+      - 63790:63790
+    links:
+      - redis:redis
+    command: --server redis
+    depends_on:
+      - redis
